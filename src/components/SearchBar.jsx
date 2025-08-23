@@ -1,23 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
-export default function SearchBar({ onSearch, initial = "" }) {
-  const [q, setQ] = useState(initial);
+export default function SearchBar() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+  const [query, setQuery] = useState(initialQuery);
 
-  function submit(e) {
+  useEffect(() => {
+    // Sync URL param to state on initial load
+    setQuery(initialQuery);
+  }, [initialQuery]);
+
+  function handleSubmit(e) {
     e.preventDefault();
-    const trimmed = q.trim();
-    if (trimmed) onSearch(trimmed);
+    const trimmedQuery = query.trim();
+    if (trimmedQuery) {
+      setSearchParams({ q: trimmedQuery });
+    }
   }
 
   return (
-    <form onSubmit={submit} className="flex gap-2">
+    <form onSubmit={handleSubmit} className="flex gap-2">
       <input
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
         placeholder="Search books, authors, keywords…"
         className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring focus:ring-green-300"
       />
-      <button className="px-4 py-2 rounded-lg bg-green-700 text-white hover:bg-green-800">
+      <button
+        type="submit"
+        className="px-4 py-2 rounded-lg bg-green-700 text-white hover:bg-green-800"
+      >
         Search
       </button>
     </form>

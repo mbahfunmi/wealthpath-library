@@ -1,42 +1,42 @@
-import { Routes, Route, NavLink } from "react-router-dom";
-import Home from "./pages/Home.jsx";
-import BookPage from "./pages/BookPage.jsx";
+// src/App.jsx
+
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Home from "./pages/Home";
+import BookPage from "./pages/BookPage";
 
 export default function App() {
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="bg-green-700 text-white">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold">WealthPath Library</h1>
-          <nav className="space-x-4 text-sm">
-            <NavLink 
-              to="/" 
-              className={({ isActive }) => (isActive ? "underline" : "")}
-            >
-              Home
-            </NavLink>
-          </nav>
-        </div>
-      </header>
+    <Router>
+      <div className="min-h-screen bg-gray-50">
+        {/* Navbar based on Wireframe */}
+        <nav className="bg-green-700 text-white p-4 md:p-6 flex justify-between items-center shadow-md">
+          <Link to="/" className="text-2xl font-bold">
+            WealthPath
+          </Link>
+          <div className="space-x-4 hidden md:flex">
+            <Link to="/" className="hover:underline">Home</Link>
+            <Link to="/featured" className="hover:underline">Featured</Link>
+            <Link to="/community" className="hover:underline">Community</Link>
+          </div>
+          {/* Mobile menu icon (placeholder) */}
+          <div className="md:hidden">
+            <button className="text-white focus:outline-none">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+              </svg>
+            </button>
+          </div>
+        </nav>
 
-      {/* Main Content */}
-      <main className="flex-1">
+        {/* Routes */}
         <Routes>
-          {/* Home/Search Page */}
           <Route path="/" element={<Home />} />
-
-          {/* Book Details Page */}
-          <Route path="/book/:workId" element={<BookPage />} />
+          <Route path="/book/:id" element={<BookPage />} />
+          {/* Placeholders for new routes */}
+          <Route path="/featured" element={<div className="p-8 text-center">Featured Page (To be implemented)</div>} />
+          <Route path="/community" element={<div className="p-8 text-center">Community Page (To be implemented)</div>} />
         </Routes>
-      </main>
-
-      {/* Footer */}
-      <footer className="bg-neutral-100 text-sm">
-        <div className="max-w-6xl mx-auto px-4 py-6 text-neutral-600">
-          © {new Date().getFullYear()} WealthPath • Built for ALX FE Capstone
-        </div>
-      </footer>
-    </div>
+      </div>
+    </Router>
   );
 }
