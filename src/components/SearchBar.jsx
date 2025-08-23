@@ -7,7 +7,6 @@ export default function SearchBar() {
   const [query, setQuery] = useState(initialQuery);
 
   useEffect(() => {
-    // Sync URL param to state on initial load
     setQuery(initialQuery);
   }, [initialQuery]);
 

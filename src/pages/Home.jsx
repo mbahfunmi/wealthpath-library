@@ -24,6 +24,8 @@ export default function Home() {
       setError(null);
       try {
         const data = await searchBooks(query);
+        // Log the response to debug any issues
+        console.log("API Response for search:", data); 
         setBooks(data.docs || []);
       } catch (err) {
         setError("Failed to fetch search results. Please try again.");
@@ -34,9 +36,9 @@ export default function Home() {
     fetchBooks();
   }, [query]);
 
-  // Static Featured Books data for the initial display
+  // Corrected Featured Books data with proper cover IDs
   const featuredBooks = [
-    { key: "OL45883W", title: "Your Financial Freedom", author_name: ["Dr. Jane Doe"], cover_i: "123456" },
+    { key: "OL45883W", title: "Your Financial Freedom", author_name: ["Dr. Jane Doe"], cover_i: "1383561" },
     { key: "OL45884W", title: "Rich Dad Poor Dad", author_name: ["Robert Kiyosaki"], cover_i: "9451998" },
     { key: "OL45885W", title: "Think and Grow Rich", author_name: ["Napoleon Hill"], cover_i: "8267215" },
   ];
@@ -105,7 +107,6 @@ export default function Home() {
           No books found for your search query.
         </p>
       )}
-
     </div>
   );
 }

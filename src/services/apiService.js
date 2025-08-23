@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// Base URL for the Open Library API
 const API_BASE_URL = "https://openlibrary.org";
 
 export function coverUrlFromId(coverId, size = "M") {
@@ -19,7 +20,6 @@ export async function getWork(workId) {
 }
 
 export async function getBookEdition(workId) {
-  // This endpoint returns a list of editions. We'll grab the first one.
   const { data } = await axios.get(`${API_BASE_URL}/works/${workId}/editions.json`);
   return data.entries?.[0] || null;
 }
