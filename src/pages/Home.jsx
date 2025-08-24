@@ -1,10 +1,9 @@
 // src/pages/Home.jsx
-
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import BookCard from "../components/BookCard";
-import { searchBooks } from "../services/apiService";
+import { searchBooks, coverUrlFromId } from "../services/apiService";
 
 export default function Home() {
   const [books, setBooks] = useState([]);
@@ -19,15 +18,13 @@ export default function Home() {
         setBooks([]);
         return;
       }
-
       setLoading(true);
       setError(null);
       try {
         const data = await searchBooks(query);
-        // Log the response to debug any issues
-        console.log("API Response for search:", data); 
-        setBooks(data.docs || []);
+        setBooks(data);
       } catch (err) {
+        console.error("Failed to fetch books:", err);
         setError("Failed to fetch search results. Please try again.");
       } finally {
         setLoading(false);
@@ -36,11 +33,26 @@ export default function Home() {
     fetchBooks();
   }, [query]);
 
-  // Corrected Featured Books data with proper cover IDs
+  // Corrected Featured Books data with proper cover URLs
   const featuredBooks = [
-    { key: "OL45883W", title: "Your Financial Freedom", author_name: ["Dr. Jane Doe"], cover_i: "1383561" },
-    { key: "OL45884W", title: "Rich Dad Poor Dad", author_name: ["Robert Kiyosaki"], cover_i: "9451998" },
-    { key: "OL45885W", title: "Think and Grow Rich", author_name: ["Napoleon Hill"], cover_i: "8267215" },
+    {
+      key: "OL45883W",
+      title: "Your Financial Freedom",
+      author: "Dr. Jane Doe",
+      coverUrl: coverUrlFromId("1383561"),
+    },
+    {
+      key: "OL45884W",
+      title: "Rich Dad Poor Dad",
+      author: "Robert Kiyosaki",
+      coverUrl: coverUrlFromId("9451998"),
+    },
+    {
+      key: "OL45885W",
+      title: "Think and Grow Rich",
+      author: "Napoleon Hill",
+      coverUrl: coverUrlFromId("8267215"),
+    },
   ];
 
   const quotes = [
@@ -62,20 +74,22 @@ export default function Home() {
           Search for books on wealth creation
         </h1>
         <p className="text-gray-600 mb-6">
-          Search for books on wealth creation...
+          Search for books on financial literacy, investing, and more...
         </p>
         <SearchBar />
       </div>
 
       {/* Featured Books Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Featured Books</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {featuredBooks.map((book) => (
-            <BookCard key={book.key} book={book} />
-          ))}
-        </div>
-      </section>
+      {!query && (
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Featured Books</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            {featuredBooks.map((book) => (
+              <BookCard key={book.key} book={book} />
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Quote of the Day */}
       <div className="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-4 mb-12 shadow-sm rounded-r-lg">
