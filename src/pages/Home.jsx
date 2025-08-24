@@ -3,15 +3,62 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
 import BookCard from "../components/BookCard";
-import { searchBooks, coverUrlFromId } from "../services/apiService";
+import { searchBooks } from "../services/apiService";
 
 export default function Home() {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [featuredBooks, setFeaturedBooks] = useState([]);
   const [searchParams] = useSearchParams();
   const query = searchParams.get("q");
 
+  // 🔹 Featured titles with manual fallback
+  const featuredTitles = [
+    { title: "Your Financial Freedom", author: "Dr. Jane Doe" },
+    { title: "Rich Dad Poor Dad", author: "Robert Kiyosaki" },
+    { title: "Think and Grow Rich", author: "Napoleon Hill" },
+  ];
+
+  // 🔹 Fetch Featured Books dynamically with fallback
+  useEffect(() => {
+    async function fetchFeatured() {
+      try {
+        const results = await Promise.all(
+          featuredTitles.map(async (item) => {
+            const apiResults = await searchBooks(item.title);
+            if (apiResults && apiResults.length > 0) {
+              return apiResults[0]; // Use API result if found
+            }
+            // Fallback object if API has no result
+            return {
+              key: `fallback-${item.title}`,
+              title: item.title,
+              author_name: [item.author],
+              cover_i: null, // no cover
+              first_publish_year: "N/A",
+            };
+          })
+        );
+        setFeaturedBooks(results);
+      } catch (err) {
+        console.error("Failed to fetch featured books:", err);
+        // if API fails completely, just show fallbacks
+        setFeaturedBooks(
+          featuredTitles.map((item) => ({
+            key: `fallback-${item.title}`,
+            title: item.title,
+            author_name: [item.author],
+            cover_i: null,
+            first_publish_year: "N/A",
+          }))
+        );
+      }
+    }
+    fetchFeatured();
+  }, []);
+
+  // 🔹 Fetch Search Results
   useEffect(() => {
     async function fetchBooks() {
       if (!query) {
@@ -33,28 +80,7 @@ export default function Home() {
     fetchBooks();
   }, [query]);
 
-  // Corrected Featured Books data with proper cover URLs
-  const featuredBooks = [
-    {
-      key: "OL45883W",
-      title: "Your Financial Freedom",
-      author: "Dr. Jane Doe",
-      coverUrl: coverUrlFromId("1383561"),
-    },
-    {
-      key: "OL45884W",
-      title: "Rich Dad Poor Dad",
-      author: "Robert Kiyosaki",
-      coverUrl: coverUrlFromId("9451998"),
-    },
-    {
-      key: "OL45885W",
-      title: "Think and Grow Rich",
-      author: "Napoleon Hill",
-      coverUrl: coverUrlFromId("8267215"),
-    },
-  ];
-
+  // 🔹 Quote of the Day
   const quotes = [
     `"If a rich gives you money, he has cheated you. What you need is access." – Dr. Cosmas Maduka`,
     `"Information is the key to financial freedom."`,
@@ -80,7 +106,7 @@ export default function Home() {
       </div>
 
       {/* Featured Books Section */}
-      {!query && (
+      {!query && featuredBooks.length > 0 && (
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Featured Books</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
