@@ -10,7 +10,10 @@ function ReadWithAI() {
   return (
     <div className="bg-green-100 p-4 rounded-lg flex items-center justify-between mt-6">
       <span className="font-semibold text-green-800">Read with AI</span>
-      <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700">
+      <button
+        onClick={() => alert("Launching AI reader...")} // The updated line
+        className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700"
+      >
         Launch AI
       </button>
     </div>

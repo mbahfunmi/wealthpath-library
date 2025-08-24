@@ -1,10 +1,13 @@
 // src/App.jsx
+import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import BookPage from "./pages/BookPage";
-import Footer from "./components/Footer"; // 👈 import footer
+import Footer from "./components/Footer";
 
 export default function App() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   return (
     <Router>
       <div className="flex flex-col min-h-screen bg-gray-50">
@@ -20,15 +23,25 @@ export default function App() {
           </div>
           {/* Mobile menu icon */}
           <div className="md:hidden">
-            <button className="text-white focus:outline-none">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6"
-                   fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                      d="M4 6h16M4 12h16m-7 6h7" />
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="text-white focus:outline-none"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
               </svg>
             </button>
           </div>
         </nav>
+
+        {/* Mobile Navigation Links */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-green-600 text-white shadow-md">
+            <Link to="/" className="block py-2 px-4 hover:bg-green-700" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+            <Link to="/featured" className="block py-2 px-4 hover:bg-green-700" onClick={() => setIsMobileMenuOpen(false)}>Featured</Link>
+            <Link to="/community" className="block py-2 px-4 hover:bg-green-700" onClick={() => setIsMobileMenuOpen(false)}>Community</Link>
+          </div>
+        )}
 
         {/* Page Content */}
         <main className="flex-grow">
